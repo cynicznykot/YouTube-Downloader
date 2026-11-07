@@ -11,3 +11,8 @@ print(info['title'])
 print(info['duration'])
 print(info['uploader'])
 
+print("\n--- All formats:", len(info['formats']), "---")
+for f in info['formats']:
+    print(f['format_id'], "|", f['ext'], "|", f.get('resolution'), "|",
+          f.get('vcodec'), "|", f.get('acodec'))
+
