@@ -1,49 +1,44 @@
+import os
 import yt_dlp
 
-url = input("Insert a link to the video: ").strip()
 
-with yt_dlp.YoutubeDL({}) as ydl:
-    info = ydl.extract_info(url, download=False)
+def get_info(url):
+    with yt_dlp.YoutubeDL({}) as ydl:
+        return ydl.extract_info(url, download=False)
 
-seen = set()
-menu = []
 
-for f in info['formats']:
-    if f.get('vcodec') != 'none' and f.get('acodec') == 'none':
-        h = f.get('height')
-        if h and h not in seen:
-            seen.add(h)
-            menu.append({
-                'label': f"{h}p  (video only, will be merged with the audio)",
-                'selector': f"bestvideo[height<={h}]+bestaudio/best",
-            })
+def build_menu(info):
+    seen = set()
+    menu = []
 
-menu.append({
-    'label': "audio only (best audio, m4a)",
-    'selector': "bestaudio/best",
-})
+    for f in info['formats']:
+        if f.get('vcodec') != 'none' and f.get('acodec') == 'none':
+            h = f.get('height')
+            if h and h not in seen:
+                seen.add(h)
+                menu.append({
+                    'label': f"{h}p  (video only, will be merged with the audio)",
+                    'selector': f"bestvideo[height<={h}]+bestaudio/best",
+                })
 
-print("\nAvailable options:")
-for i, item in enumerate(menu, start=1):
-    print(f"  [{i}] {item['label']}")
+    menu.append({
+        'label': "audio only (best audio, m4a)",
+        'selector': "bestaudio/best",
+    })
 
-while True:
-    raw = input("\nEnter the option number: ").strip()
-    if raw.isdigit() and 1 <= int(raw) <= len(menu):
-        choice = menu[int(raw) - 1]
-        break
-    print("That number doesn't exist. Try again.")
+    return menu
 
-print(f"\nSelected: {choice['label']}")
-print("Download...\n")
+def download(url, selector, folder, container, progress_hook=None):
+    os.makedirs(folder, exist_ok=True)
 
-opts = {
-    'format': choice['selector'],
-    'outtmpl': "%(title)s.%(ext)s",
-    "merge_output_format": 'mp4',
-}
+    opts = {
+        'format': choice['selector'],
+        'outtmpl': "%(title)s.%(ext)s",
+        "merge_output_format": 'mp4',
+    }
+    if progress_hook:
+        opts['progress_hooks'] = [progress_hook]
 
-with yt_dlp.YoutubeDL(opts) as ydl:
-    ydl.download([url])
+    with yt_dlp.YoutubeDL(opts) as ydl:
+        ydl.download([url])
 
-print("\nDone!")
