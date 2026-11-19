@@ -28,4 +28,19 @@ class App(ctk.CTk):
         self.format_menu = ctk.CTkOptionMenu(self, values=["- first get the formats -"], variable=self.format_var)
         self.format_menu.pack(padx=20, pady=5, fill='x')
 
+        self.container_var = ctk.StringVar(value='mp4')
+        self.container_menu = ctk.CTkOptionMenu(self, values=['mp4', 'webm'], variable=self.container_var)
+        self.container_menu.pack(padx=20, pady=5, fill='x')
+
+        self.folder_btn = ctk.CTkButton(self, text="Select a folder", command=self.on_choose_folder)
+        self.folder_btn.pack(padx=20, pady=5, fill='x')
+        self.folder_label = ctk.CTkLabel(self, text="Download", command=self.on_download, state='disabled')
+
+        self.progress = ctk.CTkProgressBar(self)
+        self.progress.pack(padx=20, pady=5, fill='x')
+        self.progress.set(0)
+
+        self.status = ctk.CTkLabel(self, text="")
+        self.status.pack(padx=20, pady=5)
+
         
