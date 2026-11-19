@@ -43,4 +43,15 @@ class App(ctk.CTk):
         self.status = ctk.CTkLabel(self, text="")
         self.status.pack(padx=20, pady=5)
 
+    def on_fetch(self):
+        url = self.url_entry.get().strip()
+        if not url:
+            messagebox.showwarning("Error", "Insert a link")
+            return
+
+        self.status.configure(text="Getting formats...")
+        self.fetch_btn.configure(state='disabled')
+
+        threading.Thread(target=self._fetch_worker, args=(url,), daemon=True).start()
+
         
