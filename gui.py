@@ -69,4 +69,11 @@ class App(ctk.CTk):
         finally:
             self.fetch_btn.configure(state='normal')
 
+    def on_choose_folder(self):
+        folder = filedialog.askdirectory()
+        if folder:
+            self.folder = folder
+            self.folder_label.configure(text=f"Folder: {folder}")
+
+
             
