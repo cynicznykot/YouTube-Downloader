@@ -54,4 +54,19 @@ class App(ctk.CTk):
 
         threading.Thread(target=self._fetch_worker, args=(url,), daemon=True).start()
 
-        
+    def _fetch_worker(self, url):
+        try:
+            self.info = get_info(url)
+            self.menu = build_menu(self.info)
+            labels = [item['label'] for item in self.menu]
+            self.format_menu.configurate(values=labels)
+            self.format_var.set(labels[0])
+            self.status.configure(text=f"Options found: {len(labels)}")
+            self.download_btn.configure(state='normal')
+        except Exception as e:
+            self.status.configure(text='Error')
+            messagebox.showerror('Error', str(e))
+        finally:
+            self.fetch_btn.configure(state='normal')
+
+            
