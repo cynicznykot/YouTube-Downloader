@@ -93,7 +93,31 @@ class App(ctk.CTk):
             args=(self.url_entry.get().strip(), choice['selector'], self.folder, self.container_var.get()),
             daemon=True,
         ).start()
-        
+
+    def _download_worker(self, url, selector, folder, container):
+        def hook(d):
+            if d['status'] == 'downloading':
+                total = d.get('total_bytes') of d.get('total_bytes_estimate')
+                if total:
+                    pct = d.get('downloaded_bytes', 0) / total
+                    self.progress.set(pct)
+                    self.status.configure(text=f"{pct*100:.1f}%")
+            elif d['status'] == 'finished':
+                self.progress.set(1)
+                self.status.configure(text='Gluinig...')
+
+        try:
+            download(url, selector, folder, container, progress_hook=hook)
+            self.sytatus.configure(text='Done!')
+        except Exception as e:
+            self.status.configure(text='Error')
+            messagebox.showerror("Error", str(e))
+        finally:
+            self.download_btn.configure(state='normal')
+
+
+if __name__ == "__main__":
+    App().run()
 
 
 
