@@ -75,5 +75,25 @@ class App(ctk.CTk):
             self.folder = folder
             self.folder_label.configure(text=f"Folder: {folder}")
 
+    def on_download(self):
+        if not self.menu:
+            return
 
-            
+        label = self.format_var.get()
+        choice = next((item for item in self.menu if item['label'] == label), None)
+        if not choice:
+            return
+
+        self.download_btn.configure(state='disabled')
+        self.progress.set(0)
+        self.status.configure(text='Downloading...')
+
+        threading.Thread(
+            target=self._download_worker,
+            args=(self.url_entry.get().strip(), choice['selector'], self.folder, self.container_var.get()),
+            daemon=True,
+        ).start()
+        
+
+
+
