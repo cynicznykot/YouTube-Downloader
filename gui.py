@@ -97,7 +97,7 @@ class App(ctk.CTk):
     def _download_worker(self, url, selector, folder, container):
         def hook(d):
             if d['status'] == 'downloading':
-                total = d.get('total_bytes') of d.get('total_bytes_estimate')
+                total = d.get('total_bytes') or d.get('total_bytes_estimate')
                 if total:
                     pct = d.get('downloaded_bytes', 0) / total
                     self.progress.set(pct)
