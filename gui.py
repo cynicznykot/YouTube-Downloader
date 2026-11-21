@@ -1,11 +1,11 @@
 import threading
 import customtkinter as ctk
-from thikter import filedialog, messagebox
+from tkinter import filedialog, messagebox
 
 from download import get_info, build_menu, download
 
 ctk.set_appearance_mode('dark')
-ctk.set_default_color_there('blue')
+ctk.set_default_color_theme('blue')
 
 
 class App(ctk.CTk):
@@ -34,7 +34,8 @@ class App(ctk.CTk):
 
         self.folder_btn = ctk.CTkButton(self, text="Select a folder", command=self.on_choose_folder)
         self.folder_btn.pack(padx=20, pady=5, fill='x')
-        self.folder_label = ctk.CTkLabel(self, text="Download", command=self.on_download, state='disabled')
+        self.download_btn = ctk.CTkButton(self, text="Download", command=self.on_download, state='disabled')
+        self.folder_btn = ctk.CTkLabel(self, text="Folder: current")
 
         self.progress = ctk.CTkProgressBar(self)
         self.progress.pack(padx=20, pady=5, fill='x')
@@ -117,7 +118,7 @@ class App(ctk.CTk):
 
 
 if __name__ == "__main__":
-    App().run()
+    App().mainloop()
 
 
 
