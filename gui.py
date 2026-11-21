@@ -47,6 +47,13 @@ class App(ctk.CTk):
         self.status = ctk.CTkLabel(self, text="")
         self.status.pack(padx=20, pady=5)
 
+        self.config_path = "config.json"
+        self.config = {'folder': '.', 'container': 'mp4'}
+        if os.path.exists(self.config_path):
+            with open(self.config_path, encoding='utf-8') as f:
+                self.config.update(json.load(f))
+        self.folder = self.config['folder']
+
     def on_fetch(self):
         url = self.url_entry.get().strip()
         if not url:
