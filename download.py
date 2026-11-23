@@ -16,6 +16,8 @@ def build_menu(info):
             h = f.get('height')
             if h and h not in seen:
                 seen.add(h)
+                size = f.get('filesize') or f.get('filsize_approx')
+                size_str = format_size(size)
                 menu.append({
                     'label': f"{h}p  (video only, will be merged with the audio)",
                     'selector': f"bestvideo[height<={h}]+bestaudio/best",
@@ -55,6 +57,15 @@ def is_playlist(info):
 
 def playlist_entries(info):
     return info.get('entries', [])
+
+def format_size(num_bytes):
+    if not num_bytes:
+        return "?"
+    for unit in ('B', 'KB', 'MB', 'GB'):
+        if num_bytes < 1024:
+            return f"{num_bytes:.1f} {unit}"
+        num_bytes /= 1024
+    return f"{num_bytes:.1f} TB"
 
 
 
