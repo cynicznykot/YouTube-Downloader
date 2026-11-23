@@ -35,6 +35,12 @@ class App(ctk.CTk):
         self.container_menu = ctk.CTkOptionMenu(self, values=['mp4', 'webm'], variable=self.container_var)
         self.container_menu.pack(padx=20, pady=5, fill='x')
 
+        self.subtitles_var = ctk.BooleanVar(value=False)
+        self.subtitles_check = ctk.CTkCheckBox(
+            self, text="Download subtitles (ru/en)", variable=self.subtitles_var
+        )
+        self.subtitles_check.pack(padx=20, pady=5, fill='x')
+
         self.folder_label = ctk.CTkLabel(self, text=f"Folder: {self.folder}")
         self.folder_btn = ctk.CTkButton(self, text="Select a folder", command=self.on_choose_folder)
         self.folder_btn.pack(padx=20, pady=5, fill='x')
