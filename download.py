@@ -28,7 +28,7 @@ def build_menu(info):
 
     return menu
 
-def download(url, selector, folder, container, progress_hook=None, subtitles=False):
+def download(url, selector, folder, container, progress_hook=None, subtitles=False, playlist=False):
     os.makedirs(folder, exist_ok=True)
 
     opts = {
@@ -42,6 +42,10 @@ def download(url, selector, folder, container, progress_hook=None, subtitles=Fal
         opts['writesubtitles'] = True
         opts['writeautomaticsub'] = True
         opts['subtitleslangs'] = ['ru', 'en']
+    if playlist:
+        opts['yes_playlist'] = True
+    else:
+        opts['noplaylist'] = True
 
     with yt_dlp.YoutubeDL(opts) as ydl:
         ydl.download([url])
