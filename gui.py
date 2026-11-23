@@ -6,6 +6,7 @@ import customtkinter as ctk
 from tkinter import filedialog, messagebox
 
 from download import get_info, build_menu, download
+from download import is_playlist, playlist_entries
 
 ctk.set_appearance_mode('dark')
 ctk.set_default_color_theme('blue')
@@ -82,12 +83,20 @@ class App(ctk.CTk):
     def _fetch_worker(self, url):
         try:
             self.info = get_info(url)
-            self.menu = build_menu(self.info)
-            labels = [item['label'] for item in self.menu]
-            self.format_menu.configurate(values=labels)
-            self.format_var.set(labels[0])
-            self.status.configure(text=f"Options found: {len(labels)}")
-            self.download_btn.configure(state='normal')
+            if is_playlist(self.info):
+                entries = playlist_entries(self.info)
+                self.menu = build_menu(self.info)
+                self.menu = build_playlist_menu()
+                self.is_playlist = True
+                self.status.configure(text=f"Playlist: {len(entries)} video")
+            else:
+                self.is_playlist = False
+                self.menu = build_menu(self.info)
+                labels = [item['label'] for item in self.menu]
+                self.format_menu.configurate(values=labels)
+                self.format_var.set(labels[0])
+                self.status.configure(text=f"Options found: {len(labels)}")
+                self.download_btn.configure(state='normal')
         except Exception as e:
             self.status.configure(text='Error')
             messagebox.showerror('Error', str(e))
@@ -136,6 +145,7 @@ class App(ctk.CTk):
                 url, selector, folder, container,
                 progress_hook=hook,
                 subtitles=self.subtitles_var.get(),
+                playlist=getattr(self, 'is_playlist', False)
             )
             self.status.configure(text='Done!')
         except Exception as e:
@@ -143,6 +153,13 @@ class App(ctk.CTk):
             messagebox.showerror("Error", str(e))
         finally:
             self.download_btn.configure(state='normal')
+
+    def build_playlist_menu():
+        return [
+            {'label': "1080p (all playlist)", 'selector': "bestvideo[height<=1080]+bestaudio/best"},
+            {'label': "720p (all playlist)", 'selector': "bestvideo[height<=720]+bestaudio/best"},
+            {'label': "audio only (all playlist)", 'selector': "bestaudio/best"},
+        ]
 
 
 if __name__ == "__main__":
