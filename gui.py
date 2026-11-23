@@ -17,6 +17,13 @@ class App(ctk.CTk):
         self.title("YouTube Downloader")
         self.geometry("600x450")
 
+        self.config_path = "config.json"
+        self.settings = {'folder': '.', 'container': 'mp4'}
+        if os.path.exists(self.config_path):
+            with open(self.config_path, encoding='utf=8') as f:
+                self.settings.update(json.load(f))
+        self.folder = self.settings['folder']
+        
         self.menu = []
         self.info = None
         self.folder = "."
@@ -31,7 +38,7 @@ class App(ctk.CTk):
         self.format_menu = ctk.CTkOptionMenu(self, values=["- first get the formats -"], variable=self.format_var)
         self.format_menu.pack(padx=20, pady=5, fill='x')
 
-        self.container_var = ctk.StringVar(value=self.config["container"])
+        self.container_var = ctk.StringVar(value=self.settings['container'])
         self.container_menu = ctk.CTkOptionMenu(self, values=['mp4', 'webm'], variable=self.container_var)
         self.container_menu.pack(padx=20, pady=5, fill='x')
 
@@ -125,8 +132,12 @@ class App(ctk.CTk):
                 self.status.configure(text='Gluinig...')
 
         try:
-            download(url, selector, folder, container, progress_hook=hook)
-            self.sytatus.configure(text='Done!')
+            download(
+                url, selector, folder, container,
+                progress_hook=hook,
+                subtitles=self.subtitles_var.get(),
+            )
+            self.status.configure(text='Done!')
         except Exception as e:
             self.status.configure(text='Error')
             messagebox.showerror("Error", str(e))
