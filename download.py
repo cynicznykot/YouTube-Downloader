@@ -28,16 +28,20 @@ def build_menu(info):
 
     return menu
 
-def download(url, selector, folder, container, progress_hook=None):
+def download(url, selector, folder, container, progress_hook=None, subtitles=False):
     os.makedirs(folder, exist_ok=True)
 
     opts = {
-        'format': choice['selector'],
-        'outtmpl': "%(title)s.%(ext)s",
-        "merge_output_format": 'mp4',
+        'format': selector,
+        'outtmpl': f"{folder}/%(title)s.%(ext)s",
+        "merge_output_format": container,
     }
     if progress_hook:
         opts['progress_hooks'] = [progress_hook]
+    if subtitles:
+        opts['writesubtitles'] = True
+        opts['writeautomaticsub'] = True
+        opts['subtitleslangs'] = ['ru', 'en']
 
     with yt_dlp.YoutubeDL(opts) as ydl:
         ydl.download([url])
