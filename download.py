@@ -46,3 +46,11 @@ def download(url, selector, folder, container, progress_hook=None, subtitles=Fal
     with yt_dlp.YoutubeDL(opts) as ydl:
         ydl.download([url])
 
+def is_playlist(info):
+    return info.get('_type') == 'playlist'
+
+def playlist_entries(info):
+    return info.get('entries', [])
+
+
+

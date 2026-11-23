@@ -23,7 +23,7 @@ class App(ctk.CTk):
             with open(self.config_path, encoding='utf=8') as f:
                 self.settings.update(json.load(f))
         self.folder = self.settings['folder']
-        
+
         self.menu = []
         self.info = None
         self.folder = "."
