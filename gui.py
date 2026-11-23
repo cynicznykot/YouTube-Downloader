@@ -1,5 +1,6 @@
 import json
 import os
+import subprocess
 
 import threading
 import customtkinter as ctk
@@ -62,6 +63,11 @@ class App(ctk.CTk):
         self.status = ctk.CTkLabel(self, text="")
         self.status.pack(padx=20, pady=5)
 
+        self.open_folder_btn = ctk.CTkButton(
+            self, text="Open folder", command=self.on_open_folder, state='disabled'
+        )
+        self.open_folder_btn.pack(padx=20, pady=5, fill='x')
+
         self.config_path = "config.json"
         self.config = {'folder': '.', 'container': 'mp4'}
         if os.path.exists(self.config_path):
@@ -118,6 +124,7 @@ class App(ctk.CTk):
         if not choice:
             return
 
+        self.open_folder_btn.configure(state='disabled')
         self.download_btn.configure(state='disabled')
         self.progress.set(0)
         self.status.configure(text='Downloading...')
@@ -148,6 +155,7 @@ class App(ctk.CTk):
                 playlist=getattr(self, 'is_playlist', False)
             )
             self.status.configure(text='Done!')
+            self.open_folder_btn.configure(state='normal')
         except Exception as e:
             self.status.configure(text='Error')
             messagebox.showerror("Error", str(e))
@@ -160,6 +168,9 @@ class App(ctk.CTk):
             {'label': "720p (all playlist)", 'selector': "bestvideo[height<=720]+bestaudio/best"},
             {'label': "audio only (all playlist)", 'selector': "bestaudio/best"},
         ]
+
+    def on_open_folder(self):
+        subprocess.Popen(["xdg-open", self.folder])
 
 
 if __name__ == "__main__":
