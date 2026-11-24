@@ -79,6 +79,15 @@ class App(ctk.CTk):
                 self.config.update(json.load(f))
         self.folder = self.config['folder']
 
+        self.queue_frame = ctk.CTkScrollableFrame(self, height=150)
+        self.queue_frame.pack(padx=20, pady=5, fill='both', expand=False)
+
+        self.queue_btn = ctk.CTkButton(self, text="Add to queue", command=self.on_add_to_queue)
+        self.queue_btn.pack(padx=20, pady=5, fill='x')
+
+        self.start_queue_btn = ctk.CTkButton(self, text="Download the queue", command=self.on_start_queue)
+        self.start_queue_btn.pack(padx=20, pady=5, fill='x')
+
     def log(self, text):
         self.log_box.configure(state='normal')
         self.log_box.insert('end', text + '\n')
