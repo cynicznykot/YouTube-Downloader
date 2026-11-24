@@ -191,6 +191,31 @@ class App(ctk.CTk):
     def on_open_folder(self):
         subprocess.Popen(["xdg-open", self.folder])
 
+    def on_add_to_queue(self):
+        url = self.url_entry.get().strip()
+        if not url:
+            messagebox.showwarning('Error', "Insert a link")
+            return
+        if not self.menu:
+            messagebox.showwarning('Error', "First get the formats")
+            return
+
+        label = self.format_var.get()
+        choice = next((item for item i self.menu if item['label'] == label), None)
+        if not choice:
+            return
+
+        task = {
+            'url': url,
+            'selector': choice['selector'],
+            'container': self.container_var.get(),
+            'status': 'waiting',
+            'progress': 0.0,
+        }
+        self.queue.append(task)
+        self.refresh_queue_view()
+        self.log(f"Added to the queue: {url}")
+
 
 if __name__ == "__main__":
     App().mainloop()
