@@ -1,13 +1,12 @@
 import json
 import os
 import subprocess
-
 import threading
+
 import customtkinter as ctk
 from tkinter import filedialog, messagebox
 
-from download import get_info, build_menu, download
-from download import is_playlist, playlist_entries
+from download import get_info, build_menu, download, is_playlist, playlist_entries
 
 ctk.set_appearance_mode('dark')
 ctk.set_default_color_theme('blue')
@@ -17,7 +16,7 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("YouTube Downloader")
-        self.geometry("600x450")
+        self.geometry("600x700")
 
         self.config_path = "config.json"
         self.settings = {'folder': '.', 'container': 'mp4'}
@@ -38,6 +37,7 @@ class App(ctk.CTk):
 
         self.format_var = ctk.StringVar(value="- first get the formats -")
         self.format_menu = ctk.CTkOptionMenu(self, values=["- first get the formats -"], variable=self.format_var)
+        self.format_menu.configure(values=labels)
         self.format_menu.pack(padx=20, pady=5, fill='x')
 
         self.container_var = ctk.StringVar(value=self.settings['container'])
@@ -201,7 +201,7 @@ class App(ctk.CTk):
             return
 
         label = self.format_var.get()
-        choice = next((item for item i self.menu if item['label'] == label), None)
+        choice = next((item for item self.menu if item['label'] == label), None)
         if not choice:
             return
 
