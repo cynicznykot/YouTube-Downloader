@@ -216,6 +216,22 @@ class App(ctk.CTk):
         self.refresh_queue_view()
         self.log(f"Added to the queue: {url}")
 
+    def refresh_queue_view(self):
+        for w in self.queue_frame.winfo_children():
+            w.destroy()
+
+        for i, task in enumerate(self.queue, start=1):
+            row = ctk.CTkFrame(self.queue_frame)
+            row.pack(fill='x', pady=2)
+
+            text = f"[{i}] {task['status']} {int(task['progress']*100)}% {task['url'][:50]}"
+            ctk.CTkLabel(row, text=text, anchor='w').pack(side='left', fill='x', expand=True)
+
+            bar = ctk.CTkProgressBar(row, width=120)
+            bar.set(task['progress'])
+            bar.pack(side='right', padx=5)
+
+            
 
 if __name__ == "__main__":
     App().mainloop()
