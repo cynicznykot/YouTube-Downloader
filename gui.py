@@ -231,7 +231,12 @@ class App(ctk.CTk):
             bar.set(task['progress'])
             bar.pack(side='right', padx=5)
 
-            
+    def on_start_queue(self):
+        if not self.queue:
+            messagebox.showinfo('Queue', "Queue is empty")
+            return
+        self.start_queue_btn.configure(state='disabled')
+        threading.Thread(target=self._queue_worker, daemon=True).start()
 
 if __name__ == "__main__":
     App().mainloop()
