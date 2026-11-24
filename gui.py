@@ -238,6 +238,43 @@ class App(ctk.CTk):
         self.start_queue_btn.configure(state='disabled')
         threading.Thread(target=self._queue_worker, daemon=True).start()
 
+    def _queue_worker(self):
+        try:
+            for task in self.queue:
+                if task['status'] != 'waiting':
+                    continue
+                task['status'] = 'downloading'
+                self.refresh_queue_view()
+                self.log(f"Downloading: {task['url']}")
+
+                def hood(d, t=task):
+                    if d['status'] == 'downloading':
+                        total = d.get('total_bytes') or d.get('total_bytes_estimate')
+                        if total:
+                            t['progress'] = d.get('downloaded_bytes', 0) / total
+                            self.refresh_queue_view()
+                        elif d['status'] == 'finished':
+                            t['progress'] = 1
+                            self.refresh_queue_view()
+
+                try:
+                    download(
+                        task['url'], task['selector'], self.folder, task['container'],
+                        progress_hook=hook,
+                        subtitles=self.subtitles_var.get(),
+                        playlist=False,
+                    )
+                    task['status'] = 'done'
+                except Exception as e:
+                    task['status'] = 'error'
+                    self.log(f"Error: {e}")
+
+                self.refresh_queue_view()
+            self.log("Queue completed")
+        finally:
+            self.start_queue_btn.configure(state='normal')
+
+
 if __name__ == "__main__":
     App().mainloop()
 
