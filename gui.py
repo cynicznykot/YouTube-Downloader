@@ -63,6 +63,10 @@ class App(ctk.CTk):
         self.status = ctk.CTkLabel(self, text="")
         self.status.pack(padx=20, pady=5)
 
+        self.log_box = ctk.CTkTextbox(self, height=120)
+        self.log_box.pack(padx=20, pady=(0, 15), fill='both', expand=True)
+        self.log_box.configure(state='disabled')
+
         self.open_folder_btn = ctk.CTkButton(
             self, text="Open folder", command=self.on_open_folder, state='disabled'
         )
@@ -75,13 +79,19 @@ class App(ctk.CTk):
                 self.config.update(json.load(f))
         self.folder = self.config['folder']
 
+    def log(self, text):
+        self.log_box.configure(state='normal')
+        self.log_box.insert('end', text + '\n')
+        self.log_box.see('end')
+        self.log_box.configure(state='disabled')
+
     def on_fetch(self):
         url = self.url_entry.get().strip()
         if not url:
             messagebox.showwarning("Error", "Insert a link")
             return
 
-        self.status.configure(text="Getting formats...")
+        self.log("Getting formats...")
         self.fetch_btn.configure(state='disabled')
 
         threading.Thread(target=self._fetch_worker, args=(url,), daemon=True).start()
@@ -101,7 +111,7 @@ class App(ctk.CTk):
                 labels = [item['label'] for item in self.menu]
                 self.format_menu.configurate(values=labels)
                 self.format_var.set(labels[0])
-                self.status.configure(text=f"Options found: {len(labels)}")
+                self.log(f"Options found: {len(labels)}")
                 self.download_btn.configure(state='normal')
         except Exception as e:
             self.status.configure(text='Error')
@@ -127,7 +137,8 @@ class App(ctk.CTk):
         self.open_folder_btn.configure(state='disabled')
         self.download_btn.configure(state='disabled')
         self.progress.set(0)
-        self.status.configure(text='Downloading...')
+        self.log(f"Selected: {label}")
+        self.log('Downloading...')
 
         threading.Thread(
             target=self._download_worker,
@@ -144,8 +155,7 @@ class App(ctk.CTk):
                     self.progress.set(pct)
                     self.status.configure(text=f"{pct*100:.1f}%")
             elif d['status'] == 'finished':
-                self.progress.set(1)
-                self.status.configure(text='Gluinig...')
+                self.log("Downloaded, merging...")
 
         try:
             download(
@@ -157,7 +167,7 @@ class App(ctk.CTk):
             self.status.configure(text='Done!')
             self.open_folder_btn.configure(state='normal')
         except Exception as e:
-            self.status.configure(text='Error')
+            self.log(f"Error: {e}")
             messagebox.showerror("Error", str(e))
         finally:
             self.download_btn.configure(state='normal')
