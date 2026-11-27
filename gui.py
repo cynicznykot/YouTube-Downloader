@@ -156,7 +156,7 @@ class App(ctk.CTk):
 
     def on_open_folder(self):
         subprocess.Popen(["xdg-open", self.folder])
-        
+
     def on_download(self):
         if not self.menu:
             return
@@ -214,7 +214,7 @@ class App(ctk.CTk):
             return
 
         label = self.format_var.get()
-        choice = next((item for item self.menu if item['label'] == label), None)
+        choice = next((item for item in self.menu if item['label'] == label), None)
         if not choice:
             return
 
