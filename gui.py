@@ -99,6 +99,20 @@ class App(ctk.CTk):
         self.log_box.see('end')
         self.log_box.configure(state='disabled')
 
+    def build_playlist_menu():
+        return [
+            {'label': "1080p (all playlist)", 'selector': "bestvideo[height<=1080]+bestaudio/best"},
+            {'label': "720p (all playlist)", 'selector': "bestvideo[height<=720]+bestaudio/best"},
+            {'label': "audio only (all playlist)", 'selector': "bestaudio/best"},
+        ]
+
+    def on_close(self):
+        self.settings['folder'] = self.folder
+        self.settings['container'] = self.container_var.get()
+        with open(self.config_path, 'w', encoding='utf-8') as f:
+            json.dump(self.settings, f, ensure_ascii=False, indent=2)
+        self.destroy()
+        
     def on_fetch(self):
         url = self.url_entry.get().strip()
         if not url:
@@ -185,13 +199,6 @@ class App(ctk.CTk):
             messagebox.showerror("Error", str(e))
         finally:
             self.download_btn.configure(state='normal')
-
-    def build_playlist_menu():
-        return [
-            {'label': "1080p (all playlist)", 'selector': "bestvideo[height<=1080]+bestaudio/best"},
-            {'label': "720p (all playlist)", 'selector': "bestvideo[height<=720]+bestaudio/best"},
-            {'label': "audio only (all playlist)", 'selector': "bestaudio/best"},
-        ]
 
     def on_open_folder(self):
         subprocess.Popen(["xdg-open", self.folder])
