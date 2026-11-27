@@ -112,7 +112,7 @@ class App(ctk.CTk):
         with open(self.config_path, 'w', encoding='utf-8') as f:
             json.dump(self.settings, f, ensure_ascii=False, indent=2)
         self.destroy()
-        
+
     def on_fetch(self):
         url = self.url_entry.get().strip()
         if not url:
@@ -121,7 +121,6 @@ class App(ctk.CTk):
 
         self.log("Getting formats...")
         self.fetch_btn.configure(state='disabled')
-
         threading.Thread(target=self._fetch_worker, args=(url,), daemon=True).start()
 
     def _fetch_worker(self, url):
@@ -130,19 +129,21 @@ class App(ctk.CTk):
             if is_playlist(self.info):
                 entries = playlist_entries(self.info)
                 self.menu = build_menu(self.info)
-                self.menu = build_playlist_menu()
+                self.menu = self.build_playlist_menu()
                 self.is_playlist = True
                 self.status.configure(text=f"Playlist: {len(entries)} video")
             else:
                 self.is_playlist = False
                 self.menu = build_menu(self.info)
-                labels = [item['label'] for item in self.menu]
-                self.format_menu.configurate(values=labels)
-                self.format_var.set(labels[0])
-                self.log(f"Options found: {len(labels)}")
-                self.download_btn.configure(state='normal')
+                self.log(f"Options found: {len(self.menu)}")
+
+            labels = [item['label'] for item in self.menu]
+            self.format_menu.configure(values=labels)
+            self.format_var.set(labels[0])
+            self.download_btn.configure(state='normal')
         except Exception as e:
             self.status.configure(text='Error')
+            self.log(f"Error: {e}")
             messagebox.showerror('Error', str(e))
         finally:
             self.fetch_btn.configure(state='normal')
