@@ -55,7 +55,6 @@ class App(ctk.CTk):
         self.folder_btn.pack(padx=20, pady=5, fill='x')
         self.folder_btn = ctk.CTkLabel(self, text="Folder: current")
 
-
         self.download_btn = ctk.CTkButton(self, text="Download", command=self.on_download, state='disabled')
         self.download_btn.pack(padx=20, pady=5, fill='x')
 
