@@ -154,6 +154,9 @@ class App(ctk.CTk):
             self.folder = folder
             self.folder_label.configure(text=f"Folder: {folder}")
 
+    def on_open_folder(self):
+        subprocess.Popen(["xdg-open", self.folder])
+        
     def on_download(self):
         if not self.menu:
             return
@@ -200,9 +203,6 @@ class App(ctk.CTk):
             messagebox.showerror("Error", str(e))
         finally:
             self.download_btn.configure(state='normal')
-
-    def on_open_folder(self):
-        subprocess.Popen(["xdg-open", self.folder])
 
     def on_add_to_queue(self):
         url = self.url_entry.get().strip()
