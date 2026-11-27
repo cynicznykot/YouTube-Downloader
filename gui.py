@@ -244,6 +244,14 @@ class App(ctk.CTk):
             bar.set(task['progress'])
             bar.pack(side='right', padx=5)
 
+        def make_remove(idx):
+            def remove():
+                del self.queue[idx]
+                self.refresh_queue_view()
+            return remove
+
+        ctk.CTkButton(row, text='x', width=30, command=make_remove(i - 1)).pack(side='right', padx=5)
+        
     def on_start_queue(self):
         if not self.queue:
             messagebox.showinfo('Queue', "Queue is empty")
